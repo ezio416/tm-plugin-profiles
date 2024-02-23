@@ -7,12 +7,12 @@ void Tab_PluginList() {
 
     float maxNameWidth = 0.0f;
     float maxAuthorWidth = 0.0f;
-    for (uint i = 0; i < plugins.Length; i++) {
-        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(plugins[i].Name).x);
-        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(plugins[i].Author).x);
+    for (uint i = 0; i < pluginsSorted.Length; i++) {
+        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(pluginsSorted[i].Name).x);
+        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(pluginsSorted[i].Author).x);
     }
 
-    if (UI::BeginTable("##table", 4, UI::TableFlags::ScrollY)) {
+    if (UI::BeginTable("##plugin-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("siteid", UI::TableColumnFlags::WidthFixed, 50.0f);
         // UI::TableSetupColumn("id");
@@ -21,10 +21,10 @@ void Tab_PluginList() {
         UI::TableSetupColumn("author", UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
         UI::TableHeadersRow();
 
-        UI::ListClipper clipper(plugins.Length);
+        UI::ListClipper clipper(pluginsSorted.Length);
         while (clipper.Step()) {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
-                Meta::Plugin@ plugin = plugins[i];
+                Meta::Plugin@ plugin = pluginsSorted[i];
 
                 UI::TableNextRow();
                 UI::TableNextColumn();
@@ -53,11 +53,28 @@ void Tab_PluginList() {
     UI::EndTabItem();
 }
 
-void Tab_PresetList() {
-    if (!UI::BeginTabItem(Icons::ThLarge + " Presets"))
+void Tab_ProfileList() {
+    if (!UI::BeginTabItem(Icons::ThLarge + " Profiles"))
         return;
 
-    ;
+    if (UI::Button(Icons::PlusCircle + " Create Profile"))
+        CreateProfile();
+
+    if (UI::BeginTable("##profile-table", 1, UI::TableFlags::ScrollY)) {
+        UI::TableSetupScrollFreeze(0, 1);
+        UI::TableSetupColumn("name");
+        UI::TableHeadersRow();
+
+        for (uint i = 0; i < profiles.Length; i++) {
+            Json::Value@ profile = profiles[i];
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text(profile["name"]);
+        }
+
+        UI::EndTable();
+    }
 
     UI::EndTabItem();
 }

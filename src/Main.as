@@ -3,11 +3,12 @@
 
 const string[]   essential = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
 Meta::Plugin@[]@ plugins;
-// Meta::Plugin@[]  pluginsSorted;
+uint             pluginsCount = 0;
+Meta::Plugin@[]  pluginsSorted;
 const string     title = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
-    RefreshPlugins();
+    LoadProfiles();
 }
 
 void RenderMenu() {
@@ -21,10 +22,15 @@ void Render() {
 
     RefreshPlugins();
 
+    if (pluginsCount != plugins.Length) {
+        pluginsCount = plugins.Length;
+        SortPlugins();
+    }
+
     UI::Begin(title, S_Show, UI::WindowFlags::None);
         UI::BeginTabBar("##tabs");
             Tab_PluginList();
-            Tab_PresetList();
+            Tab_ProfileList();
         UI::EndTabBar();
     UI::End();
 }
