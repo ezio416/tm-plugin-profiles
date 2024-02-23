@@ -121,7 +121,9 @@ void Tab_EditProfile() {
 
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
 
-    UI::Text("ID: " + editingProfile.id);
+    ;
+
+    UI::Text("Profile ID: " + editingProfile.id);
 
     UI::EndTabItem();
 }

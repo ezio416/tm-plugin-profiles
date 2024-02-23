@@ -2,17 +2,21 @@
 // m 2024-02-22
 
 Profile@     editingProfile;
-const string profileFile     = IO::FromStorageFolder("profiles.json");
+const string profileFile = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
 
 class Profile {
-    string id   = GenerateUUID();
-    string name = "unnamed";
+    string    id   = GenerateUUID();
+    string    name = "unnamed";
+    Plugin@[] plugins;
 
     Profile() { }
     Profile(Json::Value@ json) {
         id   = json["id"];
         name = json["name"];
+
+        for (uint i = 0; i < json["plugins"].Length; i++)
+            plugins.InsertLast(Plugin(json["plugins"][i]));
     }
 
     Json::Value@ ToJson() {
@@ -20,6 +24,13 @@ class Profile {
 
         json["id"]   = id;
         json["name"] = name;
+
+        Json::Value@ pluginsArray = Json::Array();
+
+        for (uint i = 0; i < plugins.Length; i++)
+            pluginsArray.Add(plugins[i].ToJson());
+
+        json["plugins"] = pluginsArray;
 
         return json;
     }
