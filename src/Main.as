@@ -31,6 +31,9 @@ void Render() {
         UI::BeginTabBar("##tabs");
             Tab_PluginList();
             Tab_ProfileList();
+
+            if (editingProfile !is null)
+                Tab_EditProfile();
         UI::EndTabBar();
     UI::End();
 }

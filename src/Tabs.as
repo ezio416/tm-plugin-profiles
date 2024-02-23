@@ -60,21 +60,34 @@ void Tab_ProfileList() {
     if (UI::Button(Icons::PlusCircle + " Create Profile"))
         CreateProfile();
 
+    UI::SameLine();
+    if (UI::Button(Icons::FloppyO + " Save Profiles"))
+        SaveProfiles();
+
     if (UI::BeginTable("##profile-table", 1, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("name");
         UI::TableHeadersRow();
 
         for (uint i = 0; i < profiles.Length; i++) {
-            Json::Value@ profile = profiles[i];
+            Profile@ profile = profiles[i];
 
             UI::TableNextRow();
             UI::TableNextColumn();
-            UI::Text(profile["name"]);
+            UI::Text(profile.name);
         }
 
         UI::EndTable();
     }
+
+    UI::EndTabItem();
+}
+
+void Tab_EditProfile() {
+    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile"))
+        return;
+
+    editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
 
     UI::EndTabItem();
 }
