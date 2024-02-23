@@ -55,12 +55,12 @@ Meta::Plugin@[]@ QuickSort(Meta::Plugin@[]@ arr, int left = 0, int right = -1) {
 }
 
 void RefreshPlugins() {
-    @plugins = Meta::AllPlugins();
+    @allPlugins = Meta::AllPlugins();
 }
 
 void SortPlugins() {
     trace("sorting plugins...");
-    pluginsSorted = QuickSort(plugins);
+    allPluginsSorted = QuickSort(allPlugins);
 }
 
 void TogglePlugin(Meta::Plugin@ plugin) {

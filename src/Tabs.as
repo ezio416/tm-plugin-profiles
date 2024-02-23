@@ -10,9 +10,9 @@ void Tab_PluginList() {
 
     float maxNameWidth = 0.0f;
     float maxAuthorWidth = 0.0f;
-    for (uint i = 0; i < pluginsSorted.Length; i++) {
-        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(pluginsSorted[i].Name).x);
-        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(pluginsSorted[i].Author).x);
+    for (uint i = 0; i < allPluginsSorted.Length; i++) {
+        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(allPluginsSorted[i].Name).x);
+        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(allPluginsSorted[i].Author).x);
     }
 
     if (UI::BeginTable("##plugin-table", 4, UI::TableFlags::ScrollY)) {
@@ -24,10 +24,10 @@ void Tab_PluginList() {
         UI::TableSetupColumn("author", UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
         UI::TableHeadersRow();
 
-        UI::ListClipper clipper(pluginsSorted.Length);
+        UI::ListClipper clipper(allPluginsSorted.Length);
         while (clipper.Step()) {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
-                Meta::Plugin@ plugin = pluginsSorted[i];
+                Meta::Plugin@ plugin = allPluginsSorted[i];
 
                 UI::TableNextRow();
                 UI::TableNextColumn();

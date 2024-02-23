@@ -1,12 +1,12 @@
 // c 2024-02-22
 // m 2024-02-22
 
-const string[]   essential    = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
-Meta::Plugin@[]@ plugins;
-uint             pluginsCount = 0;
-Meta::Plugin@[]  pluginsSorted;
-const float      scale        = UI::GetScale();
-const string     title        = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
+Meta::Plugin@[]@ allPlugins;
+uint             allPluginsCount = 0;
+Meta::Plugin@[]  allPluginsSorted;
+const string[]   essential       = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
+const float      scale           = UI::GetScale();
+const string     title           = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
     LoadProfiles();
@@ -23,8 +23,8 @@ void Render() {
 
     RefreshPlugins();
 
-    if (pluginsCount != plugins.Length) {
-        pluginsCount = plugins.Length;
+    if (allPluginsCount != allPlugins.Length) {
+        allPluginsCount = allPlugins.Length;
         SortPlugins();
     }
 
