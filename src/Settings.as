@@ -4,5 +4,5 @@
 [Setting category="General" name="Show Window"]
 bool S_Show = true;
 
-[Setting category="General" name="Allow uninstalling unsigned plugins"]
-bool S_AllowUninstallUnsigned = false;
+// [Setting category="General" name="Allow uninstalling unsigned plugins"]
+// bool S_AllowUninstallUnsigned = false;

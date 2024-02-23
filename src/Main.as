@@ -24,12 +24,13 @@ void Render() {
     UI::Begin(title, S_Show, UI::WindowFlags::None);
         UI::BeginTabBar("##tabs");
             Tab_PluginList();
+            Tab_PresetList();
         UI::EndTabBar();
     UI::End();
 }
 
 void Tab_PluginList() {
-    if (!UI::BeginTabItem("Plugin List"))
+    if (!UI::BeginTabItem(Icons::List + " Plugins"))
         return;
 
     float maxNameWidth = 0.0f;
@@ -80,13 +81,11 @@ void Tab_PluginList() {
     UI::EndTabItem();
 }
 
-void RefreshPlugins() {
-    @plugins = Meta::AllPlugins();
-}
+void Tab_PresetList() {
+    if (!UI::BeginTabItem(Icons::ThLarge + " Presets"))
+        return;
 
-void TogglePlugin(Meta::Plugin@ plugin) {
-    if (plugin.Enabled)
-        plugin.Disable();
-    else
-        plugin.Enable();
+    ;
+
+    UI::EndTabItem();
 }
