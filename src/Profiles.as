@@ -6,7 +6,7 @@ const string profileFile     = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
 
 class Profile {
-    string id = GenerateUUID();
+    string id   = GenerateUUID();
     string name = "unnamed";
 
     Profile() { }
