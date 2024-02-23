@@ -4,20 +4,21 @@
 Profile@     editingProfile;
 const string profileFile     = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
-bool         switchToEditTab = false;
 
 class Profile {
     string id = GenerateUUID();
     string name = "unnamed";
 
     Profile() { }
-    Profile(Json::Value@ j) {
-        name = j["name"];
+    Profile(Json::Value@ json) {
+        id   = json["id"];
+        name = json["name"];
     }
 
     Json::Value@ ToJson() {
         Json::Value@ json = Json::Object();
 
+        json["id"]   = id;
         json["name"] = name;
 
         return json;
@@ -30,6 +31,7 @@ void CreateProfile() {
     profiles.InsertLast(profile);
     @editingProfile = profile;
 
+    editTabOpen = true;
     switchToEditTab = true;
 }
 

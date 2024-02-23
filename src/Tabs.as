@@ -1,6 +1,9 @@
 // c 2024-02-22
 // m 2024-02-22
 
+bool editTabOpen     = false;
+bool switchToEditTab = false;
+
 void Tab_PluginList() {
     if (!UI::BeginTabItem(Icons::List + " Plugins"))
         return;
@@ -85,6 +88,7 @@ void Tab_ProfileList() {
             UI::TableNextColumn();
             if (UI::Button(Icons::Pencil + "##" + profile.id)) {
                 @editingProfile = profile;
+                editTabOpen     = true;
                 switchToEditTab = true;
             }
 
@@ -112,10 +116,12 @@ void Tab_EditProfile() {
         tabFlags |= UI::TabItemFlags::SetSelected;
     }
 
-    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile", tabFlags))
+    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile", editTabOpen,  tabFlags))
         return;
 
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
+
+    UI::Text("ID: " + editingProfile.id);
 
     UI::EndTabItem();
 }
