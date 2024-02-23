@@ -1,24 +1,18 @@
 // c 2024-02-22
 // m 2024-02-22
 
-const string[] essential = {
-    "Camera", "NadeoServices", "VehicleState", "PluginManager", "PluginProfiles"
-};
-
+const string[]   essential = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
 Meta::Plugin@[]@ plugins;
 // Meta::Plugin@[]  pluginsSorted;
 const string     title = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
-[Setting category="General" name="Show Window"]
-bool S_Show = true;
+void Main() {
+    RefreshPlugins();
+}
 
 void RenderMenu() {
     if (UI::MenuItem(title, "", S_Show))
         S_Show = !S_Show;
-}
-
-void Main() {
-    RefreshPlugins();
 }
 
 void Render() {
