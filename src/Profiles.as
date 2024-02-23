@@ -2,10 +2,12 @@
 // m 2024-02-22
 
 Profile@     editingProfile;
-const string profileFile    = IO::FromStorageFolder("profiles.json");
+const string profileFile     = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
+bool         switchToEditTab = false;
 
 class Profile {
+    string id = GenerateUUID();
     string name = "unnamed";
 
     Profile() { }
@@ -14,11 +16,11 @@ class Profile {
     }
 
     Json::Value@ ToJson() {
-        Json::Value@ j = Json::Object();
+        Json::Value@ json = Json::Object();
 
-        j["name"] = name;
+        json["name"] = name;
 
-        return j;
+        return json;
     }
 }
 
@@ -27,6 +29,8 @@ void CreateProfile() {
 
     profiles.InsertLast(profile);
     @editingProfile = profile;
+
+    switchToEditTab = true;
 }
 
 void LoadProfiles() {

@@ -64,9 +64,12 @@ void Tab_ProfileList() {
     if (UI::Button(Icons::FloppyO + " Save Profiles"))
         SaveProfiles();
 
-    if (UI::BeginTable("##profile-table", 1, UI::TableFlags::ScrollY)) {
+    if (UI::BeginTable("##profile-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("name");
+        UI::TableSetupColumn("id", UI::TableColumnFlags::WidthFixed, scale * 260.0f);
+        UI::TableSetupColumn("",   UI::TableColumnFlags::WidthFixed, scale * 30.0f);
+        UI::TableSetupColumn("",   UI::TableColumnFlags::WidthFixed, scale * 30.0f);
         UI::TableHeadersRow();
 
         for (uint i = 0; i < profiles.Length; i++) {
@@ -75,6 +78,24 @@ void Tab_ProfileList() {
             UI::TableNextRow();
             UI::TableNextColumn();
             UI::Text(profile.name);
+
+            UI::TableNextColumn();
+            UI::Text(profile.id);
+
+            UI::TableNextColumn();
+            if (UI::Button(Icons::Pencil + "##" + profile.id)) {
+                @editingProfile = profile;
+                switchToEditTab = true;
+            }
+
+            UI::TableNextColumn();
+            if (UI::Button(Icons::TrashO + "##" + profile.id)) {
+                if (editingProfile is profiles[i])
+                    @editingProfile = null;
+
+                profiles.RemoveAt(i);
+                break;
+            }
         }
 
         UI::EndTable();
@@ -84,7 +105,14 @@ void Tab_ProfileList() {
 }
 
 void Tab_EditProfile() {
-    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile"))
+    int tabFlags = UI::TabItemFlags::None;
+
+    if (switchToEditTab) {
+        switchToEditTab = false;
+        tabFlags |= UI::TabItemFlags::SetSelected;
+    }
+
+    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile", tabFlags))
         return;
 
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);

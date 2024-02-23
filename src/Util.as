@@ -1,6 +1,23 @@
 // c 2024-02-22
 // m 2024-02-22
 
+string GenerateUUID() {
+    const string[] chars = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
+    const int[]    dash  = { 2, 3, 4, 5 };
+
+    string uuid;
+
+    for (uint i = 0; i < 8; i++) {
+        if (dash.Find(i) > -1)
+            uuid += "-";
+
+        for (uint j = 0; j < 4; j++)
+            uuid += chars[Math::Rand(0, 16)];
+    }
+
+    return uuid;
+}
+
 Meta::Plugin@[]@ QuickSort(Meta::Plugin@[]@ arr, int left = 0, int right = -1) {
     if (right < 0)
         right = arr.Length - 1;

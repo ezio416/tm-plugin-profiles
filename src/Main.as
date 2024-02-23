@@ -1,11 +1,12 @@
 // c 2024-02-22
 // m 2024-02-22
 
-const string[]   essential = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
+const string[]   essential    = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
 Meta::Plugin@[]@ plugins;
 uint             pluginsCount = 0;
 Meta::Plugin@[]  pluginsSorted;
-const string     title = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
+const float      scale        = UI::GetScale();
+const string     title        = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
     LoadProfiles();
