@@ -9,6 +9,7 @@ const float      scale           = UI::GetScale();
 const string     title           = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
+    RefreshPlugins();
     LoadProfiles();
 }
 

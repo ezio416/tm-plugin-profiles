@@ -15,8 +15,28 @@ class Profile {
         id   = json["id"];
         name = json["name"];
 
+        for (uint i = 0; i < allPlugins.Length; i++)
+            plugins.InsertLast(Plugin(allPlugins[i]));
+
         for (uint i = 0; i < json["plugins"].Length; i++)
             plugins.InsertLast(Plugin(json["plugins"][i]));
+    }
+
+    void Activate() {
+        trace("activating profile (" + name + ")");
+
+        for (uint i = 0; i < plugins.Length; i++) {
+            Plugin@ plugin = plugins[i];
+
+            Meta::Plugin@ installedPlugin = Meta::GetPluginFromID(plugin.id);
+            if (installedPlugin is null)
+                continue;
+
+            if (plugin.action == Action::Enable && !installedPlugin.Enabled)
+                installedPlugin.Enable();
+            else if (plugin.action == Action::Disable && installedPlugin.Enabled)
+                installedPlugin.Disable();
+        }
     }
 
     Json::Value@ ToJson() {
