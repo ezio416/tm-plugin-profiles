@@ -106,6 +106,8 @@ class Profile {
 void CreateProfile() {
     Profile@ profile = Profile();
 
+    profile.RefreshPlugins();
+
     profiles.InsertLast(profile);
     @editingProfile = profile;
 
