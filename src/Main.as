@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-22
+// m 2024-02-26
 
 Meta::Plugin@[]@ allPlugins;
 uint             allPluginsCount = 0;
@@ -9,7 +9,7 @@ const float      scale           = UI::GetScale();
 const string     title           = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
-    RefreshPlugins();
+    RefreshAllPlugins();
     LoadProfiles();
 }
 
@@ -22,11 +22,17 @@ void Render() {
     if (!S_Show)
         return;
 
-    RefreshPlugins();
+    RefreshAllPlugins();
 
     if (allPluginsCount != allPlugins.Length) {
+        SortAllPlugins();
+
+        if (allPluginsCount > 0) {
+            for (uint i = 0; i < profiles.Length; i++)
+                profiles[i].RefreshPlugins();
+        }
+
         allPluginsCount = allPlugins.Length;
-        SortPlugins();
     }
 
     UI::Begin(title, S_Show, UI::WindowFlags::None);

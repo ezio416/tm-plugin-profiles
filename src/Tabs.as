@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-22
+// m 2024-02-26
 
 bool editTabOpen     = false;
 bool switchToEditTab = false;
@@ -128,9 +128,10 @@ void Tab_EditProfile() {
 
     UI::Text("Profile ID: " + editingProfile.id);
 
-    if (UI::BeginTable("##profile-plugin-table", 4, UI::TableFlags::ScrollY)) {
+    if (UI::BeginTable("##profile-plugin-table", 5, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("plugin ID");
+        UI::TableSetupColumn("name");
         UI::TableSetupColumn("enable" , UI::TableColumnFlags::WidthFixed, scale * 50.0f);
         UI::TableSetupColumn("disable", UI::TableColumnFlags::WidthFixed, scale * 50.0f);
         UI::TableSetupColumn("ignore" , UI::TableColumnFlags::WidthFixed, scale * 50.0f);
@@ -142,6 +143,9 @@ void Tab_EditProfile() {
             UI::TableNextRow();
             UI::TableNextColumn();
             UI::Text(plugin.id);
+
+            UI::TableNextColumn();
+            UI::Text(plugin.name);
 
             UI::BeginDisabled(essential.Find(plugin.id) > -1);
 

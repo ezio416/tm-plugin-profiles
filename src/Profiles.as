@@ -1,25 +1,34 @@
 // c 2024-02-22
-// m 2024-02-22
+// m 2024-02-26
 
 Profile@     editingProfile;
 const string profileFile = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
 
 class Profile {
-    string    id   = GenerateUUID();
-    string    name = "unnamed";
-    Plugin@[] plugins;
+    string      id        = GenerateUUID();
+    string      name      = "unnamed";
+    dictionary@ pluginIds = dictionary();
+    Plugin@[]   plugins;
 
     Profile() { }
     Profile(Json::Value@ json) {
         id   = json["id"];
         name = json["name"];
 
-        for (uint i = 0; i < allPlugins.Length; i++)
-            plugins.InsertLast(Plugin(allPlugins[i]));
+        for (uint i = 0; i < allPlugins.Length; i++) {
+            Plugin@ plugin = Plugin(allPlugins[i]);
 
-        for (uint i = 0; i < json["plugins"].Length; i++)
-            plugins.InsertLast(Plugin(json["plugins"][i]));
+            pluginIds.Set(plugin.id, @plugin);
+            plugins.InsertLast(plugin);
+        }
+
+        for (uint i = 0; i < json["plugins"].Length; i++) {
+            Plugin@ plugin = Plugin(json["plugins"][i]);
+
+            if (pluginIds.Exists(plugin.id))
+                cast<Plugin@>(pluginIds[plugin.id]).action = plugin.action;
+        }
     }
 
     void Activate() {
@@ -39,6 +48,40 @@ class Profile {
         }
     }
 
+    void RefreshPlugins() {
+        dictionary@ installedPlugins = dictionary();
+
+        for (uint i = 0; i < allPlugins.Length; i++) {
+            Meta::Plugin@ installedPlugin = allPlugins[i];
+
+            if (pluginIds.Exists(installedPlugin.ID)) {
+                Plugin@ checked = cast<Plugin@>(pluginIds[installedPlugin.ID]);
+                installedPlugins.Set(checked.id, 0);
+
+                continue;
+            }
+
+            Plugin@ plugin = Plugin(installedPlugin);
+            pluginIds.Set(plugin.id, @plugin);
+            plugins.InsertLast(plugin);
+            installedPlugins.Set(plugin.id, 0);
+        }
+
+        for (int i = plugins.Length - 1; i >= 0; i--) {
+            if (!installedPlugins.Exists(plugins[i].id)) {
+                pluginIds.Delete(plugins[i].id);
+                plugins.RemoveAt(i);
+            }
+        }
+
+        SortPlugins();
+    }
+
+    void SortPlugins() {
+        trace("sorting plugins in profile (" + name + ")...");
+        plugins = QuickSort(plugins);
+    }
+
     Json::Value@ ToJson() {
         Json::Value@ json = Json::Object();
 
@@ -47,8 +90,12 @@ class Profile {
 
         Json::Value@ pluginsArray = Json::Array();
 
-        for (uint i = 0; i < plugins.Length; i++)
-            pluginsArray.Add(plugins[i].ToJson());
+        for (uint i = 0; i < plugins.Length; i++) {
+            Plugin@ plugin = plugins[i];
+
+            if (plugin.action != Action::Ignore)
+                pluginsArray.Add(plugin.ToJson());
+        }
 
         json["plugins"] = pluginsArray;
 
@@ -78,13 +125,16 @@ void LoadProfiles() {
 
     Json::Value@ loadedProfiles = Json::FromFile(profileFile);
 
-    if (loadedProfiles.GetType() == Json::Type::Null) {
-        trace("profiles.json is empty");
+    if (loadedProfiles.GetType() != Json::Type::Array) {
+        trace("profiles.json is empty or invalid");
         return;
     }
 
-    for (uint i = 0; i < loadedProfiles.Length; i++)
-        profiles.InsertLast(Profile(loadedProfiles[i]));
+    for (uint i = 0; i < loadedProfiles.Length; i++) {
+        Profile@ profile = Profile(loadedProfiles[i]);
+        profile.RefreshPlugins();
+        profiles.InsertLast(profile);
+    }
 }
 
 void SaveProfiles() {

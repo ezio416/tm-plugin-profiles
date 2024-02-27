@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-22
+// m 2024-02-26
 
 enum Action {
     Enable,
@@ -10,14 +10,20 @@ enum Action {
 class Plugin {
     Action action = Action::Ignore;
     string id;
+    string name;
 
     Plugin() { }
     Plugin(Json::Value@ json) {
         action = Action(int(json["action"]));
         id     = json["id"];
+
+        Meta::Plugin@ plugin = Meta::GetPluginFromID(id);
+        if (plugin !is null)
+            name = plugin.Name;
     }
     Plugin(Meta::Plugin@ plugin) {
-        id = plugin.ID;
+        id   = plugin.ID;
+        name = plugin.Name;
     }
 
     Json::Value@ ToJson() {
