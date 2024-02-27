@@ -78,7 +78,7 @@ class Profile {
     }
 
     void SortPlugins() {
-        trace("sorting plugins in profile (" + name + ")...");
+        trace("sorting plugins in profile (" + name + ")");
         plugins = QuickSort(plugins);
     }
 
@@ -118,7 +118,7 @@ void CreateProfile() {
 }
 
 void LoadProfiles() {
-    trace("loading profiles.json...");
+    trace("loading profiles.json");
 
     if (!IO::FileExists(profileFile)) {
         trace("profiles.json not found");
@@ -146,7 +146,7 @@ void LoadProfiles() {
 }
 
 void SaveProfiles() {
-    trace("saving profiles.json...");
+    trace("saving profiles.json");
 
     Json::Value savingProfiles = Json::Array();
 

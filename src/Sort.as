@@ -74,6 +74,6 @@ Plugin@[]@ QuickSort(Plugin@[]@ arr, int left = 0, int right = -1) {
 }
 
 void SortAllPlugins() {
-    trace("sorting all plugins...");
+    trace("sorting all plugins");
     allPluginsSorted = QuickSort(allPlugins);
 }
