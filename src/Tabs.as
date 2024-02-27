@@ -5,23 +5,14 @@ bool editTabOpen     = false;
 bool switchToEditTab = false;
 
 void Tab_PluginList() {
-    if (!UI::BeginTabItem(Icons::List + " Plugins"))
+    if (!UI::BeginTabItem(Icons::List + " Plugins (" + allPlugins.Length + ")###tab-plugins"))
         return;
 
-    float maxNameWidth = 0.0f;
-    float maxAuthorWidth = 0.0f;
-    for (uint i = 0; i < allPluginsSorted.Length; i++) {
-        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(allPluginsSorted[i].Name).x);
-        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(allPluginsSorted[i].Author).x);
-    }
-
-    if (UI::BeginTable("##plugin-table", 4, UI::TableFlags::ScrollY)) {
+    if (UI::BeginTable("##plugin-table", 3, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("siteid",  UI::TableColumnFlags::WidthFixed, 50.0f);
-        // UI::TableSetupColumn("id");
-        UI::TableSetupColumn("enabled", UI::TableColumnFlags::WidthFixed, 70.0f);
-        UI::TableSetupColumn("name",    UI::TableColumnFlags::WidthFixed, maxNameWidth);
-        UI::TableSetupColumn("author",  UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
+        UI::TableSetupColumn("Enabled", UI::TableColumnFlags::WidthFixed, scale * 50.0f);
+        UI::TableSetupColumn("Plugin",  UI::TableColumnFlags::WidthFixed, maxNameWidth);
+        UI::TableSetupColumn("Author",  UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
         UI::TableHeadersRow();
 
         UI::ListClipper clipper(allPluginsSorted.Length);
@@ -30,11 +21,6 @@ void Tab_PluginList() {
                 Meta::Plugin@ plugin = allPluginsSorted[i];
 
                 UI::TableNextRow();
-                UI::TableNextColumn();
-                UI::Text(tostring(plugin.SiteID));
-
-                // UI::TableNextColumn();
-                // UI::Text(plugin.ID);
 
                 UI::TableNextColumn();
                 UI::BeginDisabled(essential.Find(plugin.ID) > -1);
@@ -57,7 +43,7 @@ void Tab_PluginList() {
 }
 
 void Tab_ProfileList() {
-    if (!UI::BeginTabItem(Icons::ThLarge + " Profiles"))
+    if (!UI::BeginTabItem(Icons::ThLarge + " Profiles (" + profiles.Length + ")###tab-profiles"))
         return;
 
     if (UI::Button(Icons::PlusCircle + " Create Profile"))
@@ -67,43 +53,42 @@ void Tab_ProfileList() {
     if (UI::Button(Icons::FloppyO + " Save Profiles"))
         SaveProfiles();
 
-    if (UI::BeginTable("##profile-table", 5, UI::TableFlags::ScrollY)) {
+    if (UI::BeginTable("##profile-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("name");
-        UI::TableSetupColumn("id", UI::TableColumnFlags::WidthFixed, scale * 260.0f);
-        UI::TableSetupColumn("",   UI::TableColumnFlags::WidthFixed, scale * 30.0f);
-        UI::TableSetupColumn("",   UI::TableColumnFlags::WidthFixed, scale * 30.0f);
-        UI::TableSetupColumn("",   UI::TableColumnFlags::WidthFixed, scale * 30.0f);
+        UI::TableSetupColumn("Profile");
+        for (uint i = 0; i < 3; i++)
+            UI::TableSetupColumn("", UI::TableColumnFlags::WidthFixed, scale * 30.0f);
         UI::TableHeadersRow();
 
-        for (uint i = 0; i < profiles.Length; i++) {
-            Profile@ profile = profiles[i];
+        UI::ListClipper clipper(profiles.Length);
+        while (clipper.Step()) {
+            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
+                Profile@ profile = profiles[i];
 
-            UI::TableNextRow();
-            UI::TableNextColumn();
-            UI::Text(profile.name);
+                UI::TableNextRow();
 
-            UI::TableNextColumn();
-            UI::Text(profile.id);
+                UI::TableNextColumn();
+                UI::Text(profile.name);
 
-            UI::TableNextColumn();
-            if (UI::Button(Icons::Forward + "##" + profile.id))
-                profile.Activate();
+                UI::TableNextColumn();
+                if (UI::Button(Icons::Forward + "##" + profile.id))
+                    profile.Activate();
 
-            UI::TableNextColumn();
-            if (UI::Button(Icons::Pencil + "##" + profile.id)) {
-                @editingProfile = profile;
-                editTabOpen     = true;
-                switchToEditTab = true;
-            }
+                UI::TableNextColumn();
+                if (UI::Button(Icons::Pencil + "##" + profile.id)) {
+                    @editingProfile = profile;
+                    editTabOpen     = true;
+                    switchToEditTab = true;
+                }
 
-            UI::TableNextColumn();
-            if (UI::Button(Icons::TrashO + "##" + profile.id)) {
-                if (editingProfile is profiles[i])
-                    @editingProfile = null;
+                UI::TableNextColumn();
+                if (UI::Button(Icons::TrashO + "##" + profile.id)) {
+                    if (editingProfile is profiles[i])
+                        @editingProfile = null;
 
-                profiles.RemoveAt(i);
-                break;
+                    profiles.RemoveAt(i);
+                    break;
+                }
             }
         }
 
@@ -126,42 +111,60 @@ void Tab_EditProfile() {
 
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
 
-    UI::Text("Profile ID: " + editingProfile.id);
+    if (UI::Button("Enable All")) {
+        for (uint i = 0; i < editingProfile.plugins.Length; i++) {
+            if (essential.Find(editingProfile.plugins[i].id) == -1)
+                editingProfile.plugins[i].action = Action::Enable;
+        }
+    }
 
-    if (UI::BeginTable("##profile-plugin-table", 5, UI::TableFlags::ScrollY)) {
+    UI::SameLine();
+    if (UI::Button("Disable All")) {
+        for (uint i = 0; i < editingProfile.plugins.Length; i++)
+            if (essential.Find(editingProfile.plugins[i].id) == -1)
+                editingProfile.plugins[i].action = Action::Disable;
+    }
+
+    UI::SameLine();
+    if (UI::Button("Ignore All")) {
+        for (uint i = 0; i < editingProfile.plugins.Length; i++)
+            editingProfile.plugins[i].action = Action::Ignore;
+    }
+
+    if (UI::BeginTable("##profile-plugin-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("plugin ID");
-        UI::TableSetupColumn("name");
-        UI::TableSetupColumn("enable" , UI::TableColumnFlags::WidthFixed, scale * 50.0f);
-        UI::TableSetupColumn("disable", UI::TableColumnFlags::WidthFixed, scale * 50.0f);
-        UI::TableSetupColumn("ignore" , UI::TableColumnFlags::WidthFixed, scale * 50.0f);
+        UI::TableSetupColumn("Plugin");
+        UI::TableSetupColumn("Enable" , UI::TableColumnFlags::WidthFixed, scale * 45.0f);
+        UI::TableSetupColumn("Disable", UI::TableColumnFlags::WidthFixed, scale * 45.0f);
+        UI::TableSetupColumn("Ignore" , UI::TableColumnFlags::WidthFixed, scale * 45.0f);
         UI::TableHeadersRow();
 
-        for (uint i = 0; i < editingProfile.plugins.Length; i++) {
-            Plugin@ plugin = editingProfile.plugins[i];
+        UI::ListClipper clipper(editingProfile.plugins.Length);
+        while (clipper.Step()) {
+            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
+                Plugin@ plugin = editingProfile.plugins[i];
 
-            UI::TableNextRow();
-            UI::TableNextColumn();
-            UI::Text(plugin.id);
+                UI::TableNextRow();
 
-            UI::TableNextColumn();
-            UI::Text(plugin.name);
+                UI::TableNextColumn();
+                UI::Text(plugin.name);
 
-            UI::BeginDisabled(essential.Find(plugin.id) > -1);
+                UI::BeginDisabled(essential.Find(plugin.id) > -1);
 
-            UI::TableNextColumn();
-            if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable))
-                plugin.action = Action::Enable;
+                UI::TableNextColumn();
+                if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable))
+                    plugin.action = Action::Enable;
 
-            UI::TableNextColumn();
-            if (UI::Checkbox("##disable" + plugin.id, plugin.action == Action::Disable))
-                plugin.action = Action::Disable;
+                UI::TableNextColumn();
+                if (UI::Checkbox("##disable" + plugin.id, plugin.action == Action::Disable))
+                    plugin.action = Action::Disable;
 
-            UI::TableNextColumn();
-            if (UI::Checkbox("##ignore" + plugin.id, plugin.action == Action::Ignore))
-                plugin.action = Action::Ignore;
+                UI::TableNextColumn();
+                if (UI::Checkbox("##ignore" + plugin.id, plugin.action == Action::Ignore))
+                    plugin.action = Action::Ignore;
 
-            UI::EndDisabled();
+                UI::EndDisabled();
+            }
         }
 
         UI::EndTable();
