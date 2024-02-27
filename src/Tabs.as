@@ -71,6 +71,9 @@ void Tab_ProfileList() {
         UI::ListClipper clipper(profiles.Length);
         while (clipper.Step()) {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
+                if (i == int(profiles.Length))
+                    break;
+
                 Profile@ profile = profiles[i];
 
                 UI::TableNextRow();
