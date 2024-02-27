@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-26
+// m 2024-02-27
 
 bool  editTabOpen     = false;
 float maxAuthorWidth  = 0.0f;
@@ -12,7 +12,7 @@ void Tab_PluginList() {
 
     if (UI::BeginTable("##plugin-table", 3, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("Enabled", UI::TableColumnFlags::WidthFixed, scale * 50.0f);
+        UI::TableSetupColumn("Enabled", UI::TableColumnFlags::WidthFixed, scale * 55.0f);
         UI::TableSetupColumn("Plugin",  UI::TableColumnFlags::WidthFixed, maxNameWidth);
         UI::TableSetupColumn("Author",  UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
         UI::TableHeadersRow();
@@ -29,6 +29,13 @@ void Tab_PluginList() {
                 if (UI::Checkbox("##checkbox" + plugin.ID, plugin.Enabled) != plugin.Enabled)
                     TogglePlugin(plugin);
                 UI::EndDisabled();
+
+                UI::SameLine();
+                switch (plugin.SignatureLevel) {
+                    case -1:    UI::Text(Icons::Code);      break;
+                    case 10000: UI::Text(Icons::Heartbeat); break;
+                    default:;
+                }
 
                 UI::TableNextColumn();
                 UI::Text(plugin.Name);
