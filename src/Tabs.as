@@ -108,7 +108,7 @@ void Tab_EditProfile() {
         tabFlags |= UI::TabItemFlags::SetSelected;
     }
 
-    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile", editTabOpen, tabFlags))
+    if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile (" + editingProfile.name + ")###tab-editing", editTabOpen, tabFlags))
         return;
 
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
