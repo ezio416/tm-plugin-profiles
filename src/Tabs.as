@@ -46,11 +46,17 @@ void Tab_ProfileList() {
     if (!UI::BeginTabItem(Icons::ThLarge + " Profiles (" + profiles.Length + ")###tab-profiles"))
         return;
 
+    UI::TextWrapped("Remember to save when you're done editing! Auto-save will come in a future update.");
+
     if (UI::Button(Icons::PlusCircle + " Create Profile"))
         CreateProfile();
 
     UI::SameLine();
-    if (UI::Button(Icons::FloppyO + " Save Profiles"))
+    if (UI::Button(Icons::FileO + " Load Profiles"))
+        LoadProfiles();
+
+    UI::SameLine();
+    if (UI::Button(Icons::FloppyO + " Save Profiles" + (dirty ? " *" : "")))
         SaveProfiles();
 
     if (UI::BeginTable("##profile-table", 4, UI::TableFlags::ScrollY)) {
@@ -83,6 +89,8 @@ void Tab_ProfileList() {
 
                 UI::TableNextColumn();
                 if (UI::Button(Icons::TrashO + "##" + profile.id)) {
+                    dirty = true;
+
                     if (editingProfile is profiles[i]) {
                         @editingProfile = null;
                         editTabOpen = false;
@@ -111,26 +119,36 @@ void Tab_EditProfile() {
     if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile (" + editingProfile.name + ")###tab-editing", editTabOpen, tabFlags))
         return;
 
-    editingProfile.name = UI::InputText("Profile Name", editingProfile.name, false);
+    bool changed = false;
+    editingProfile.name = UI::InputText("Profile Name", editingProfile.name, changed);
+    if (changed)
+        dirty = true;
 
     if (UI::Button("Enable All")) {
         for (uint i = 0; i < editingProfile.plugins.Length; i++) {
             if (essential.Find(editingProfile.plugins[i].id) == -1)
                 editingProfile.plugins[i].action = Action::Enable;
         }
+
+        dirty = true;
     }
 
     UI::SameLine();
     if (UI::Button("Disable All")) {
-        for (uint i = 0; i < editingProfile.plugins.Length; i++)
+        for (uint i = 0; i < editingProfile.plugins.Length; i++) {
             if (essential.Find(editingProfile.plugins[i].id) == -1)
                 editingProfile.plugins[i].action = Action::Disable;
+        }
+
+        dirty = true;
     }
 
     UI::SameLine();
     if (UI::Button("Ignore All")) {
         for (uint i = 0; i < editingProfile.plugins.Length; i++)
             editingProfile.plugins[i].action = Action::Ignore;
+
+        dirty = true;
     }
 
     if (UI::BeginTable("##profile-plugin-table", 4, UI::TableFlags::ScrollY)) {
@@ -154,16 +172,22 @@ void Tab_EditProfile() {
                 UI::BeginDisabled(essential.Find(plugin.id) > -1);
 
                 UI::TableNextColumn();
-                if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable))
+                if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable) && plugin.action != Action::Enable) {
                     plugin.action = Action::Enable;
+                    dirty = true;
+                }
 
                 UI::TableNextColumn();
-                if (UI::Checkbox("##disable" + plugin.id, plugin.action == Action::Disable))
+                if (UI::Checkbox("##disable" + plugin.id, plugin.action == Action::Disable) && plugin.action != Action::Disable) {
                     plugin.action = Action::Disable;
+                    dirty = true;
+                }
 
                 UI::TableNextColumn();
-                if (UI::Checkbox("##ignore" + plugin.id, plugin.action == Action::Ignore))
+                if (UI::Checkbox("##ignore" + plugin.id, plugin.action == Action::Ignore) && plugin.action != Action::Ignore) {
                     plugin.action = Action::Ignore;
+                    dirty = true;
+                }
 
                 UI::EndDisabled();
             }

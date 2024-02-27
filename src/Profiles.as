@@ -113,6 +113,8 @@ void CreateProfile() {
 
     editTabOpen = true;
     switchToEditTab = true;
+
+    dirty = true;
 }
 
 void LoadProfiles() {
@@ -124,6 +126,8 @@ void LoadProfiles() {
     }
 
     profiles.RemoveRange(0, profiles.Length);
+    @editingProfile = null;
+    editTabOpen = false;
 
     Json::Value@ loadedProfiles = Json::FromFile(profileFile);
 
@@ -137,6 +141,8 @@ void LoadProfiles() {
         profile.RefreshPlugins();
         profiles.InsertLast(profile);
     }
+
+    dirty = false;
 }
 
 void SaveProfiles() {
@@ -148,4 +154,6 @@ void SaveProfiles() {
         savingProfiles.Add(profiles[i].ToJson());
 
     Json::ToFile(profileFile, savingProfiles);
+
+    dirty = false;
 }
