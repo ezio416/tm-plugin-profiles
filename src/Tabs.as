@@ -1,8 +1,10 @@
 // c 2024-02-22
 // m 2024-02-26
 
-bool editTabOpen     = false;
-bool switchToEditTab = false;
+bool  editTabOpen     = false;
+float maxAuthorWidth  = 0.0f;
+float maxNameWidth    = 0.0f;
+bool  switchToEditTab = false;
 
 void Tab_PluginList() {
     if (!UI::BeginTabItem(Icons::List + " Plugins (" + allPlugins.Length + ")###tab-plugins"))
