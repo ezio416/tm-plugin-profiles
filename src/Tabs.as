@@ -83,8 +83,10 @@ void Tab_ProfileList() {
 
                 UI::TableNextColumn();
                 if (UI::Button(Icons::TrashO + "##" + profile.id)) {
-                    if (editingProfile is profiles[i])
+                    if (editingProfile is profiles[i]) {
                         @editingProfile = null;
+                        editTabOpen = false;
+                    }
 
                     profiles.RemoveAt(i);
                     break;
