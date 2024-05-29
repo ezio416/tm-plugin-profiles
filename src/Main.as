@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-26
+// m 2024-05-06
 
 Meta::Plugin@[]@ allPlugins;
 uint             allPluginsCount = 0;
@@ -36,7 +36,7 @@ void Render() {
         allPluginsCount = allPlugins.Length;
     }
 
-    UI::Begin(title, S_Show, UI::WindowFlags::None);
+    if (UI::Begin(title, S_Show, UI::WindowFlags::None)) {
         UI::BeginTabBar("##tabs");
             Tab_PluginList();
             Tab_ProfileList();
@@ -46,5 +46,7 @@ void Render() {
             else
                 @editingProfile = null;
         UI::EndTabBar();
+    }
+
     UI::End();
 }
