@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-05-06
+// m 2024-06-01
 
 Meta::Plugin@[]@ allPlugins;
 uint             allPluginsCount = 0;
@@ -20,7 +20,11 @@ void RenderMenu() {
 }
 
 void Render() {
-    if (!S_Show)
+    if (
+        !S_Show
+        || (S_HideWithGame && !UI::IsGameUIVisible())
+        || (S_HideWithOP && !UI::IsOverlayShown())
+    )
         return;
 
     RefreshAllPlugins();
