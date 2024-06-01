@@ -176,12 +176,14 @@ void Tab_EditProfile() {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
                 Plugin@ plugin = editingProfile.plugins[i];
 
+                const bool isEssential = essential.Find(plugin.id) > -1;
+
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
-                UI::Text(plugin.name);
+                UI::Text((isEssential ? "\\$888" : "") + plugin.name);
 
-                UI::BeginDisabled(essential.Find(plugin.id) > -1);
+                UI::BeginDisabled(isEssential);
 
                 UI::TableNextColumn();
                 if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable) && plugin.action != Action::Enable) {
