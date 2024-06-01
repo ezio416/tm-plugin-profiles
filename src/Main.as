@@ -15,8 +15,21 @@ void Main() {
 }
 
 void RenderMenu() {
-    if (UI::MenuItem(title, "", S_Show))
-        S_Show = !S_Show;
+    if (UI::BeginMenu(title)) {
+        if (UI::MenuItem("Show Window", "", S_Show))
+            S_Show = !S_Show;
+
+        UI::Separator();
+
+        for (uint i = 0; i < profiles.Length; i++) {
+            Profile@ profile = profiles[i];
+
+            if (UI::MenuItem(profile.name))
+                profile.Activate();
+        }
+
+        UI::EndMenu();
+    }
 }
 
 void Render() {
