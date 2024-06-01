@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-26
+// m 2024-06-01
 
 const string[] uuidChars  = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
 const int[]    uuidDashes = { 2, 3, 4, 5 };
@@ -35,4 +35,6 @@ void TogglePlugin(Meta::Plugin@ plugin) {
         plugin.Disable();
     else
         plugin.Enable();
+
+    Meta::SaveSettings();
 }

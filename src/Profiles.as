@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-26
+// m 2024-06-01
 
 Profile@     editingProfile;
 const string profileFile = IO::FromStorageFolder("profiles.json");
@@ -46,6 +46,8 @@ class Profile {
             else if (plugin.action == Action::Disable && installedPlugin.Enabled)
                 installedPlugin.Disable();
         }
+
+        Meta::SaveSettings();
     }
 
     void RefreshPlugins() {
