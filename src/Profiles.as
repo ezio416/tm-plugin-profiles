@@ -134,7 +134,7 @@ void LoadProfiles() {
     Json::Value@ loadedProfiles = Json::FromFile(profileFile);
 
     if (loadedProfiles.GetType() != Json::Type::Array) {
-        trace("profiles.json is empty or invalid");
+        warn("profiles.json is empty or invalid");
         return;
     }
 
@@ -150,7 +150,7 @@ void LoadProfiles() {
 void SaveProfiles() {
     trace("saving profiles.json");
 
-    Json::Value savingProfiles = Json::Array();
+    Json::Value@ savingProfiles = Json::Array();
 
     for (uint i = 0; i < profiles.Length; i++)
         savingProfiles.Add(profiles[i].ToJson());

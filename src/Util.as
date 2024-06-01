@@ -18,6 +18,15 @@ string GenerateUUID() {
     return uuid;
 }
 
+void HoverTooltip(const string &in msg) {
+    if (!UI::IsItemHovered())
+        return;
+
+    UI::BeginTooltip();
+        UI::Text(msg);
+    UI::EndTooltip();
+}
+
 void RefreshAllPlugins() {
     @allPlugins = Meta::AllPlugins();
 
