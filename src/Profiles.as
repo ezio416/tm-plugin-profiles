@@ -1,6 +1,7 @@
 // c 2024-02-22
-// m 2024-02-26
+// m 2024-06-01
 
+// Profile@     activeProfile;
 Profile@     editingProfile;
 const string profileFile = IO::FromStorageFolder("profiles.json");
 Profile@[]   profiles;
@@ -46,6 +47,10 @@ class Profile {
             else if (plugin.action == Action::Disable && installedPlugin.Enabled)
                 installedPlugin.Disable();
         }
+
+        // @activeProfile = this;
+
+        Meta::SaveSettings();
     }
 
     void RefreshPlugins() {
@@ -132,7 +137,7 @@ void LoadProfiles() {
     Json::Value@ loadedProfiles = Json::FromFile(profileFile);
 
     if (loadedProfiles.GetType() != Json::Type::Array) {
-        trace("profiles.json is empty or invalid");
+        warn("profiles.json is empty or invalid");
         return;
     }
 
@@ -148,7 +153,7 @@ void LoadProfiles() {
 void SaveProfiles() {
     trace("saving profiles.json");
 
-    Json::Value savingProfiles = Json::Array();
+    Json::Value@ savingProfiles = Json::Array();
 
     for (uint i = 0; i < profiles.Length; i++)
         savingProfiles.Add(profiles[i].ToJson());

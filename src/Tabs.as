@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-02-27
+// m 2024-06-01
 
 bool  editTabOpen     = false;
 float maxAuthorWidth  = 0.0f;
@@ -22,10 +22,12 @@ void Tab_PluginList() {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
                 Meta::Plugin@ plugin = allPluginsSorted[i];
 
+                const bool isEssential = essential.Find(plugin.ID) > -1;
+
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
-                UI::BeginDisabled(essential.Find(plugin.ID) > -1);
+                UI::BeginDisabled(isEssential);
                 if (UI::Checkbox("##checkbox" + plugin.ID, plugin.Enabled) != plugin.Enabled)
                     TogglePlugin(plugin);
                 UI::EndDisabled();
@@ -38,7 +40,7 @@ void Tab_PluginList() {
                 }
 
                 UI::TableNextColumn();
-                UI::Text(plugin.Name);
+                UI::Text((isEssential ? "\\$888" : "") + plugin.Name);
 
                 UI::TableNextColumn();
                 UI::Text(plugin.Author);
@@ -55,18 +57,26 @@ void Tab_ProfileList() {
     if (!UI::BeginTabItem(Icons::ThLarge + " Profiles (" + profiles.Length + ")###tab-profiles"))
         return;
 
-    UI::TextWrapped("Remember to save when you're done editing! Auto-save will come in a future update.");
+    if (!S_Autosave)
+        UI::TextWrapped("Remember to save when you're done editing! Enable autosave in settings.");
 
     if (UI::Button(Icons::PlusCircle + " Create Profile"))
         CreateProfile();
 
-    UI::SameLine();
-    if (UI::Button(Icons::FileO + " Load Profiles"))
-        LoadProfiles();
+    if (S_Autosave) {
+        if (dirty)
+            SaveProfiles();
+    } else {
+        UI::SameLine();
+        if (UI::Button(Icons::FileO + " Load Profiles"))
+            LoadProfiles();
 
-    UI::SameLine();
-    if (UI::Button(Icons::FloppyO + " Save Profiles" + (dirty ? " *" : "")))
-        SaveProfiles();
+        UI::BeginDisabled(!dirty);
+        UI::SameLine();
+        if (UI::Button(Icons::FloppyO + " Save Profiles" + (dirty ? " *" : "")))
+            SaveProfiles();
+        UI::EndDisabled();
+    }
 
     if (UI::BeginTable("##profile-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
@@ -111,6 +121,8 @@ void Tab_ProfileList() {
                     profiles.RemoveAt(i);
                     break;
                 }
+                if (S_Autosave)
+                    HoverTooltip("Autosave is enabled - you cannot undo this!");
             }
         }
 
@@ -136,6 +148,25 @@ void Tab_EditProfile() {
     if (changed)
         dirty = true;
 
+    if (UI::Button("Grab Current")) {
+        for (uint i = 0; i < editingProfile.plugins.Length; i++) {
+            Plugin@ plugin = editingProfile.plugins[i];
+
+            if (essential.Find(plugin.id) > -1)
+                continue;
+
+            Meta::Plugin@ installedPlugin = Meta::GetPluginFromID(plugin.id);
+            if (installedPlugin is null)
+                continue;
+
+            plugin.action = installedPlugin.Enabled ? Action::Enable : Action::Disable;
+        }
+
+        dirty = true;
+    }
+    HoverTooltip("Sets plugins to their current state");
+
+    UI::SameLine();
     if (UI::Button("Enable All")) {
         for (uint i = 0; i < editingProfile.plugins.Length; i++) {
             if (essential.Find(editingProfile.plugins[i].id) == -1)
@@ -176,12 +207,14 @@ void Tab_EditProfile() {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
                 Plugin@ plugin = editingProfile.plugins[i];
 
+                const bool isEssential = essential.Find(plugin.id) > -1;
+
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
-                UI::Text(plugin.name);
+                UI::Text((isEssential ? "\\$888" : "") + plugin.name);
 
-                UI::BeginDisabled(essential.Find(plugin.id) > -1);
+                UI::BeginDisabled(isEssential);
 
                 UI::TableNextColumn();
                 if (UI::Checkbox("##enable" + plugin.id, plugin.action == Action::Enable) && plugin.action != Action::Enable) {
