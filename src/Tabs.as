@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-06-01
+// m 2024-06-03
 
 bool  editTabOpen     = false;
 float maxAuthorWidth  = 0.0f;
@@ -240,6 +240,72 @@ void Tab_EditProfile() {
 
         UI::EndTable();
     }
+
+    UI::EndTabItem();
+}
+
+void Tab_Troubleshooting() {
+    if (
+        !S_Troubleshooting
+        || !UI::BeginTabItem(Icons::Cogs + " Troubleshooting")
+    )
+        return;
+
+    UI::TextWrapped(
+        "Are you having issues with a certain plugin, but can't seem to figure out which one it is? Hopefully this can help you out."
+        + " You will probably want to take a picture/screenshot of everything here since you will be restarting the game a few times."
+    );
+
+    UI::Separator();
+
+    UI::TextWrapped("""
+First, you'll want to make sure the issue is caused by Openplanet at all.
+
+Starting the game without Openplanet:
+1. Start holding down the \$0FFPause/Break \$Gkey on your keyboard. Don't release it yet!
+2. Click \$0FFPlay \$Gin Ubisoft Connect, the Epic Games Launcher, or Steam.
+3. When you see the game itself load (the window opened), release the \$0FFPause/Break \$Gkey now.
+
+(If you don't have that key on your keyboard, you can also rename \$0FFdinput8.dll \$Gto something else in your game directory.)
+
+You can double-check where the used Trackmania instance (game directory) is located:
+Once Trackmania is started, open the task manager, right-click \$0FFTrackmania.exe \$Gand select to open its file location.
+    """);
+
+    UI::Separator();
+
+    UI::TextWrapped("""
+If the game runs normally without Openplanet, then you'll want to see if it's an issue with Openplanet itself instead of a plugin.
+
+1. With the game running with Openplanet, open the Openplanet menu (default key is \$0FFF3\$G)
+2. At the top of the screen open the \$0FFDeveloper \$Gmenu
+3. Near the bottom of that menu, click \$0FFStop script engine \$G
+
+It may take a few seconds for the engine to stop. Once the game is running normally again, try to recreate your issue.
+
+If it persists, then it's probably with Openplanet itself. You should head to the Openplanet Discord server:
+    """);
+
+    if (UI::Button(Icons::Discord + " Discord"))
+        OpenBrowserURL("https://discord.com/channels/276076890714800129/449983875586850827");
+
+    UI::Separator();
+
+    UI::TextWrapped("""
+If your issue does not persist, then it's probably caused by a certain plugin.
+
+Before starting this process, I highly recommend:
+1. Go to the \$0FFProfiles \$Gtab at the top
+2. Click \$0FFCreate Profile\$G
+3. Select \$0FFGrab Current\$G
+4. Name this profile something like \$0FFdefault\$G
+
+This way you can restore the plugins you had enabled once you're done diagnosing your issue.
+
+The buttons below will help you perform what's called a \$0FFbinary search \$Gwhich should help you quickly narrow down which plugin is causing your issue.
+
+
+    """);
 
     UI::EndTabItem();
 }

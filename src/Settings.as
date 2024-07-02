@@ -1,5 +1,5 @@
 // c 2024-02-22
-// m 2024-06-01
+// m 2024-06-03
 
 [Setting category="General" name="Show Window"]
 bool S_Show = true;
@@ -12,6 +12,9 @@ bool S_HideWithOP = false;
 
 [Setting category="General" name="Autosave" description="Saves profiles on the \"Profiles\" tab whenever it can"]
 bool S_Autosave = false;
+
+[Setting category="General" name="Show troubleshooting tab"]
+bool S_Troubleshooting = true;
 
 // [Setting category="General" name="Allow uninstalling unsigned plugins"]
 // bool S_AllowUninstallUnsigned = false;
