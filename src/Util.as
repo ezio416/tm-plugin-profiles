@@ -30,11 +30,15 @@ void HoverTooltip(const string&in msg) {
 void RefreshAllPlugins() {
     @allPlugins = Meta::AllPlugins();
 
+    SetColumnWidths();
+}
+
+void SetColumnWidths() {
     maxNameWidth   = 0.0f;
     maxAuthorWidth = 0.0f;
 
     for (uint i = 0; i < allPlugins.Length; i++) {
-        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(allPlugins[i].Name).x);
+        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(allPlugins[i].Name + (S_Versions ? " (" + allPlugins[i].Version + ")" : "")).x);
         maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(allPlugins[i].Author).x);
     }
 }

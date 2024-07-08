@@ -10,6 +10,13 @@ void Main() {
     LoadProfiles();
 }
 
+void OnSettingsChanged() {
+    if (_S_VersionsPre != S_Versions) {
+        _S_VersionsPre = S_Versions;
+        SetColumnWidths();
+    }
+}
+
 void RenderMenu() {
     if (UI::BeginMenu(title)) {
         if (UI::MenuItem("Show Window", "", S_Show)) {

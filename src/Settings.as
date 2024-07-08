@@ -10,5 +10,9 @@ bool S_HideWithOP = false;
 [Setting category="General" name="Autosave" description="Saves profiles on the \"Profiles\" tab whenever it can"]
 bool S_Autosave = false;
 
+[Setting category="General" name="Show plugin version numbers"]
+bool S_Versions = false;
+bool _S_VersionsPre = S_Versions;
+
 // [Setting category="General" name="Allow uninstalling unsigned plugins"]
 // bool S_AllowUninstallUnsigned = false;

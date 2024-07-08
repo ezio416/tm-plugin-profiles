@@ -12,9 +12,9 @@ void Tab_PluginList() {
 
     if (UI::BeginTable("##plugin-table", 3, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("Enabled", UI::TableColumnFlags::WidthFixed, scale * 55.0f);
-        UI::TableSetupColumn("Plugin",  UI::TableColumnFlags::WidthFixed, maxNameWidth);
-        UI::TableSetupColumn("Author",  UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
+        UI::TableSetupColumn("Enabled",   UI::TableColumnFlags::WidthFixed, scale * 55.0f);
+        UI::TableSetupColumn("Plugin",    UI::TableColumnFlags::WidthFixed, maxNameWidth);
+        UI::TableSetupColumn("Author(s)", UI::TableColumnFlags::WidthFixed, maxAuthorWidth);
         UI::TableHeadersRow();
 
         UI::ListClipper clipper(allPluginsSorted.Length);
@@ -40,7 +40,7 @@ void Tab_PluginList() {
                 }
 
                 UI::TableNextColumn();
-                UI::Text((isEssential ? "\\$888" : "") + plugin.Name);
+                UI::Text((isEssential ? "\\$888" : "") + plugin.Name + (S_Versions ? "\\$888 (" + plugin.Version + ")": ""));
 
                 UI::TableNextColumn();
                 UI::Text(plugin.Author);
