@@ -8,6 +8,8 @@ void Tab_PluginList() {
         return;
     }
 
+    const float scale = UI::GetScale();
+
     if (UI::BeginTable("##plugin-table", 3, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("Enabled", UI::TableColumnFlags::WidthFixed, scale * 55.0f);
@@ -55,6 +57,8 @@ void Tab_ProfileList() {
     if (!UI::BeginTabItem(Icons::ThLarge + " Profiles (" + profiles.Length + ")###tab-profiles")) {
         return;
     }
+
+    const float scale = UI::GetScale();
 
     if (!S_Autosave) {
         UI::TextWrapped("Remember to save when you're done editing! Enable autosave in settings.");
@@ -150,6 +154,8 @@ void Tab_EditProfile() {
     if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile (" + editingProfile.name + ")###tab-editing", editTabOpen, tabFlags)) {
         return;
     }
+
+    const float scale = UI::GetScale();
 
     bool changed = false;
     editingProfile.name = UI::InputText("Profile Name", editingProfile.name, changed);

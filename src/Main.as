@@ -3,7 +3,6 @@ uint             allPluginsCount = 0;
 Meta::Plugin@[]  allPluginsSorted;
 bool             dirty           = false;
 const string[]   essential       = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
-const float      scale           = UI::GetScale();
 const string     title           = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
 
 void Main() {
