@@ -38,8 +38,8 @@ void SetColumnWidths() {
     maxAuthorWidth = 0.0f;
 
     for (uint i = 0; i < allPlugins.Length; i++) {
-        maxNameWidth = Math::Max(maxNameWidth, Draw::MeasureString(allPlugins[i].Name + (S_Versions ? " (" + allPlugins[i].Version + ")" : "")).x);
-        maxAuthorWidth = Math::Max(maxAuthorWidth, Draw::MeasureString(allPlugins[i].Author).x);
+        maxNameWidth = Math::Max(maxNameWidth, UI::MeasureString(allPlugins[i].Name + (S_Versions ? " (" + allPlugins[i].Version + ")" : "")).x);
+        maxAuthorWidth = Math::Max(maxAuthorWidth, UI::MeasureString(allPlugins[i].Author).x);
     }
 }
 
