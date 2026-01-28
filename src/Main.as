@@ -66,7 +66,7 @@ void Render() {
         allPluginsCount = allPlugins.Length;
     }
 
-    if (UI::Begin(title, S_Show, UI::WindowFlags::None)) {
+    if (UI::Begin(title, S_Show)) {
         UI::BeginTabBar("##tabs");
 
         Tab_PluginList();
