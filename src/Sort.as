@@ -1,6 +1,3 @@
-// c 2024-02-26
-// m 2024-02-26
-
 Meta::Plugin@[]@ QuickSort(Meta::Plugin@[]@ arr, int left = 0, int right = -1) {
     if (right < 0)
         right = arr.Length - 1;

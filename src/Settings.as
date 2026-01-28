@@ -1,6 +1,3 @@
-// c 2024-02-22
-// m 2024-06-01
-
 [Setting category="General" name="Show Window"]
 bool S_Show = true;
 

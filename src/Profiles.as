@@ -1,6 +1,3 @@
-// c 2024-02-22
-// m 2024-06-01
-
 // Profile@     activeProfile;
 Profile@     editingProfile;
 const string profileFile = IO::FromStorageFolder("profiles.json");

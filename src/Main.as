@@ -1,6 +1,3 @@
-// c 2024-02-22
-// m 2024-06-01
-
 Meta::Plugin@[]@ allPlugins;
 uint             allPluginsCount = 0;
 Meta::Plugin@[]  allPluginsSorted;
