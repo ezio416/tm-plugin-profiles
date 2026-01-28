@@ -5,22 +5,25 @@ string GenerateUUID() {
     string uuid;
 
     for (int i = 0; i < 8; i++) {
-        if (uuidDashes.Find(i) > -1)
+        if (uuidDashes.Find(i) > -1) {
             uuid += "-";
+        }
 
-        for (uint j = 0; j < 4; j++)
+        for (uint j = 0; j < 4; j++) {
             uuid += uuidChars[Math::Rand(0, 16)];
+        }
     }
 
     return uuid;
 }
 
-void HoverTooltip(const string &in msg) {
-    if (!UI::IsItemHovered())
+void HoverTooltip(const string&in msg) {
+    if (!UI::IsItemHovered()) {
         return;
+    }
 
     UI::BeginTooltip();
-        UI::Text(msg);
+    UI::Text(msg);
     UI::EndTooltip();
 }
 
@@ -37,10 +40,11 @@ void RefreshAllPlugins() {
 }
 
 void TogglePlugin(Meta::Plugin@ plugin) {
-    if (plugin.Enabled)
+    if (plugin.Enabled) {
         plugin.Disable();
-    else
+    } else {
         plugin.Enable();
+    }
 
     Meta::SaveSettings();
 }

@@ -13,16 +13,18 @@ void Main() {
 
 void RenderMenu() {
     if (UI::BeginMenu(title)) {
-        if (UI::MenuItem("Show Window", "", S_Show))
+        if (UI::MenuItem("Show Window", "", S_Show)) {
             S_Show = !S_Show;
+        }
 
         UI::Separator();
 
         for (uint i = 0; i < profiles.Length; i++) {
             Profile@ profile = profiles[i];
 
-            if (UI::MenuItem(profile.name))
+            if (UI::MenuItem(profile.name)) {
                 profile.Activate();
+            }
         }
 
         UI::EndMenu();
@@ -30,12 +32,19 @@ void RenderMenu() {
 }
 
 void Render() {
-    if (
-        !S_Show
-        || (S_HideWithGame && !UI::IsGameUIVisible())
-        || (S_HideWithOP && !UI::IsOverlayShown())
-    )
+    if (false
+        or !S_Show
+        or (true
+            and S_HideWithGame
+            and !UI::IsGameUIVisible()
+        )
+        or (true
+            and S_HideWithOP
+            and !UI::IsOverlayShown()
+        )
+    ) {
         return;
+    }
 
     RefreshAllPlugins();
 
@@ -43,8 +52,9 @@ void Render() {
         SortAllPlugins();
 
         if (allPluginsCount > 0) {
-            for (uint i = 0; i < profiles.Length; i++)
+            for (uint i = 0; i < profiles.Length; i++) {
                 profiles[i].RefreshPlugins();
+            }
         }
 
         allPluginsCount = allPlugins.Length;
@@ -52,13 +62,16 @@ void Render() {
 
     if (UI::Begin(title, S_Show, UI::WindowFlags::None)) {
         UI::BeginTabBar("##tabs");
-            Tab_PluginList();
-            Tab_ProfileList();
 
-            if (editTabOpen)
-                Tab_EditProfile();
-            else
-                @editingProfile = null;
+        Tab_PluginList();
+        Tab_ProfileList();
+
+        if (editTabOpen) {
+            Tab_EditProfile();
+        } else {
+            @editingProfile = null;
+        }
+
         UI::EndTabBar();
     }
 

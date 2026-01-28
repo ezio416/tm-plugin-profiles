@@ -15,8 +15,9 @@ class Plugin {
         id     = json["id"];
 
         Meta::Plugin@ plugin = Meta::GetPluginFromID(id);
-        if (plugin !is null)
+        if (plugin !is null) {
             name = plugin.Name;
+        }
     }
     Plugin(Meta::Plugin@ plugin) {
         id   = plugin.ID;
