@@ -18,7 +18,7 @@ string GenerateUUID() {
 }
 
 void HoverTooltip(const string&in msg) {
-    if (!UI::IsItemHovered()) {
+    if (!UI::IsItemHovered(UI::HoveredFlags::AllowWhenDisabled)) {
         return;
     }
 
