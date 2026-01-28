@@ -214,6 +214,22 @@ void Tab_EditProfile() {
         dirty = true;
     }
 
+    UI::SameLine();
+    if (UI::Button("Invert Selection")) {
+        for (uint i = 0; i < editingProfile.plugins.Length; i++) {
+            switch (editingProfile.plugins[i].action) {
+                case Action::Enable:
+                    editingProfile.plugins[i].action = Action::Disable;
+                    break;
+                case Action::Disable:
+                    editingProfile.plugins[i].action = Action::Enable;
+                    break;
+            }
+        }
+
+        dirty = true;
+    }
+
     if (UI::BeginTable("##profile-plugin-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("Plugin");
