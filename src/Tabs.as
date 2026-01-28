@@ -72,6 +72,7 @@ void Tab_ProfileList() {
         if (dirty) {
             SaveProfiles();
         }
+
     } else {
         UI::SameLine();
         if (UI::Button(Icons::FileO + " Load Profiles")) {
@@ -106,12 +107,18 @@ void Tab_ProfileList() {
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
-                UI::Text(profile.name);
+                UI::Text((profile.unsafe ? "\\$FA0" : "") + profile.name);
 
                 UI::TableNextColumn();
+                UI::BeginDisabled(true
+                    and !S_DisableEssential
+                    and profile.unsafe
+                );
                 if (UI::Button(Icons::Forward + "##" + profile.id)) {
                     profile.Activate();
                 }
+                UI::EndDisabled();
+                HoverTooltip("Activate");
 
                 UI::TableNextColumn();
                 if (UI::Button(Icons::Pencil + "##" + profile.id)) {
@@ -119,6 +126,7 @@ void Tab_ProfileList() {
                     editTabOpen     = true;
                     switchToEditTab = true;
                 }
+                HoverTooltip("Edit");
 
                 UI::TableNextColumn();
                 if (UI::Button(Icons::TrashO + "##" + profile.id)) {
@@ -132,8 +140,10 @@ void Tab_ProfileList() {
                     profiles.RemoveAt(i);
                     break;
                 }
-                if (S_Autosave)
+                HoverTooltip("Delete");
+                if (S_Autosave) {
                     HoverTooltip("Autosave is enabled - you cannot undo this!");
+                }
             }
         }
 
@@ -149,6 +159,10 @@ void Tab_EditProfile() {
     if (switchToEditTab) {
         switchToEditTab = false;
         tabFlags |= UI::TabItemFlags::SetSelected;
+    }
+
+    if (dirty) {
+        tabFlags |= UI::TabItemFlags::UnsavedDocument;
     }
 
     if (!UI::BeginTabItem(Icons::Pencil + " Edit Profile (" + editingProfile.name + ")###tab-editing", editTabOpen, tabFlags)) {
@@ -167,7 +181,10 @@ void Tab_EditProfile() {
         for (uint i = 0; i < editingProfile.plugins.Length; i++) {
             Plugin@ plugin = editingProfile.plugins[i];
 
-            if (essential.Find(plugin.id) > -1) {
+            if (true
+                and !editingProfile.unsafe
+                and essential.Find(plugin.id) > -1
+            ) {
                 continue;
             }
 
@@ -230,6 +247,26 @@ void Tab_EditProfile() {
         dirty = true;
     }
 
+    UI::SameLine();
+    const bool wasUnsafe = editingProfile.unsafe;
+    editingProfile.unsafe = UI::Checkbox("\\$FA0Unsafe", editingProfile.unsafe);
+    HoverTooltip("Allows disabling essential plugins (main setting must be enabled for this)");
+    if (wasUnsafe != editingProfile.unsafe) {
+        if (true
+            and wasUnsafe
+            and !editingProfile.unsafe
+        ) {
+            for (uint i = 0; i < editingProfile.plugins.Length; i++) {
+                Plugin@ plugin = editingProfile.plugins[i];
+                if (essential.Find(plugin.id) > -1) {
+                    plugin.action = Action::Ignore;
+                }
+            }
+        }
+
+        dirty = true;
+    }
+
     if (UI::BeginTable("##profile-plugin-table", 4, UI::TableFlags::ScrollY)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("Plugin");
@@ -250,7 +287,10 @@ void Tab_EditProfile() {
                 UI::TableNextColumn();
                 UI::Text((isEssential ? "\\$888" : "") + plugin.name);
 
-                UI::BeginDisabled(isEssential);
+                UI::BeginDisabled(true
+                    and isEssential
+                    and !editingProfile.unsafe
+                );
 
                 UI::TableNextColumn();
                 if (true

@@ -2,18 +2,42 @@ Meta::Plugin@[]@ allPlugins;
 uint             allPluginsCount = 0;
 Meta::Plugin@[]  allPluginsSorted;
 bool             dirty           = false;
-const string[]   essential       = { "Camera", "NadeoServices", "PluginManager", "VehicleState", "PluginProfiles" };
 const string     title           = "\\$FFF" + Icons::Plug + "\\$G Plugin Profiles";
+
+const string[] essential = {
+    "Camera",
+    "Controls",
+    "NadeoServices",
+    "PluginManager",
+    "VehicleState",
+    "PluginProfiles"
+};
 
 void Main() {
     RefreshAllPlugins();
     LoadProfiles();
 }
 
+void OnDestroyed() {
+    EnableEssentials();
+}
+
+void OnDisabled() {
+    EnableEssentials();
+}
+
 void OnSettingsChanged() {
     if (_S_VersionsPre != S_Versions) {
         _S_VersionsPre = S_Versions;
         SetColumnWidths();
+    }
+
+    if (_S_DisableEssentialPre != S_DisableEssential) {
+        _S_DisableEssentialPre = S_DisableEssential;
+
+        if (!S_DisableEssential) {
+            EnableEssentials();
+        }
     }
 }
 
@@ -28,9 +52,15 @@ void RenderMenu() {
         for (uint i = 0; i < profiles.Length; i++) {
             Profile@ profile = profiles[i];
 
-            if (UI::MenuItem(profile.name)) {
+            UI::BeginDisabled(true
+                and !S_DisableEssential
+                and profile.unsafe
+            );
+            if (UI::MenuItem((profile.unsafe ? "\\$FA0" : "") + profile.name)) {
                 profile.Activate();
             }
+            HoverTooltip("Activate");
+            UI::EndDisabled();
         }
 
         UI::EndMenu();

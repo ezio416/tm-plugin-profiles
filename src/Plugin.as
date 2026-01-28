@@ -33,3 +33,16 @@ class Plugin {
         return json;
     }
 }
+
+void EnableEssentials() {
+    for (uint i = 0; i < allPlugins.Length; i++) {
+        Meta::Plugin@ plugin = allPlugins[i];
+        if (true
+            and !plugin.Enabled
+            and essential.Find(plugin.ID) > -1
+        ) {
+            print('essential plugin "' + plugin.ID + '" was disabled, enabling');
+            plugin.Enable();
+        }
+    }
+}

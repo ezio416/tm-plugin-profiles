@@ -8,11 +8,17 @@ class Profile {
     string     name      = "unnamed";
     dictionary pluginIds = dictionary();
     Plugin@[]  plugins;
+    bool       unsafe    = false;
 
     Profile() { }
     Profile(Json::Value@ json) {
         id   = json["id"];
         name = json["name"];
+
+        Json::Value@ _unsafe = json["unsafe"];
+        if (_unsafe.GetType() == Json::Type::Boolean) {
+            unsafe = _unsafe;
+        }
 
         for (uint i = 0; i < allPlugins.Length; i++) {
             auto plugin = Plugin(allPlugins[i]);
@@ -32,6 +38,16 @@ class Profile {
 
     void Activate() {
         trace("activating profile (" + name + ")");
+
+        if (true
+            and unsafe
+            and !S_DisableEssential
+        ) {
+            warn("can't activate profile (unsafe)");
+            return;
+        }
+
+        EnableEssentials();
 
         for (uint i = 0; i < plugins.Length; i++) {
             Plugin@ plugin = plugins[i];
@@ -97,8 +113,9 @@ class Profile {
     Json::Value@ ToJson() {
         Json::Value@ json = Json::Object();
 
-        json["id"]   = id;
-        json["name"] = name;
+        json["id"]     = id;
+        json["name"]   = name;
+        json["unsafe"] = unsafe;
 
         Json::Value@ pluginsArray = Json::Array();
 
